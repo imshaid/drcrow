@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: drcrow-bot
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python main.py
+    healthCheckPath: /health
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: GROUP_ID
+        sync: false
+      - key: ADMIN_IDS
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: WEBHOOK_BASE_URL
+        sync: false
+      - key: PORT
+        value: 8080
+      - key: DEV
+        value: false
+      - key: ALLOWED_TOPIC_IDS
+        value: "2"
