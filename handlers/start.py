@@ -330,12 +330,7 @@ async def group_redirect(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     await msg.reply_text(
-        "Not just a bot. A system.\n\n"
-        "Dr. Crow runs on knowledge — books, notes, past questions, "
-        "exam schedules, advisor info, AI assistant, and much more.\n\n"
-        "Built for Twilight Crows BSc CSE · DIU · Batch 66.\n"
-        "Managed by @surjowho\n\n"
-        "Use Dr. Crow in DM for resources and help.",
+"This topic is for announcements only.\nDM the bot for resources and help.",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
                 "Open Dr. Crow",
