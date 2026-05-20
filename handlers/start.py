@@ -303,11 +303,15 @@ def resources_inline_kb() -> InlineKeyboardMarkup:
 async def group_redirect(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Called for ANY message in the group.
-    - If message is in an allowed topic → reply with DM button
-    - Otherwise → completely ignore
+    - Only responds to /drcrow command in allowed topics
+    - Everything else → completely ignore
     """
     msg = update.effective_message
     if msg is None:
+        return
+
+    # Don't reply to the bot's own messages
+    if msg.from_user and msg.from_user.id == context.bot.id:
         return
 
     topic_id = msg.message_thread_id
@@ -316,13 +320,22 @@ async def group_redirect(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if topic_id not in settings.ALLOWED_TOPIC_IDS:
         return
 
-    # Don't reply to the bot's own messages
-    if msg.from_user and msg.from_user.id == context.bot.id:
+    # Only respond to /drcrow command — ignore everything else
+    text = (msg.text or "").strip().lower()
+    is_drcrow = (
+        text == "/drcrow"
+        or text == f"/drcrow@{context.bot.username.lower()}"
+    )
+    if not is_drcrow:
         return
 
     await msg.reply_text(
-        "This topic is for announcements only.\n"
-        "Use the bot in DM for resources and help.",
+        "Not just a bot. A system.\n\n"
+        "Dr. Crow runs on knowledge — books, notes, past questions, "
+        "exam schedules, advisor info, AI assistant, and much more.\n\n"
+        "Built for Twilight Crows BSc CSE · DIU · Batch 66.\n"
+        "Managed by @surjowho\n\n"
+        "Use Dr. Crow in DM for resources and help.",
         reply_markup=InlineKeyboardMarkup([[
             InlineKeyboardButton(
                 "Open Dr. Crow",
@@ -330,6 +343,16 @@ async def group_redirect(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         ]])
     )
+
+
+async def cmd_drcrow_group(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    /drcrow command handler.
+    - In DM → behaves like /start
+    - In group → handled by group_redirect above
+    """
+    if update.effective_chat.type == "private":
+        await cmd_start(update, context)
 
 
 # ── /start ─────────────────────────────────────────────────────────────────────

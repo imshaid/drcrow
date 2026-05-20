@@ -208,6 +208,7 @@ def build_app() -> Application:
 
     # DM commands
     app.add_handler(CommandHandler("start",      start.cmd_start,             filters=filters.ChatType.PRIVATE))
+    app.add_handler(CommandHandler("drcrow",     start.cmd_drcrow_group))
     app.add_handler(CommandHandler("profile",    profile.cmd_profile,         filters=filters.ChatType.PRIVATE))
     app.add_handler(CommandHandler("admin",      admin.cmd_admin,             filters=filters.ChatType.PRIVATE))
     app.add_handler(CommandHandler("cancel",     cancel_handler,              filters=filters.ChatType.PRIVATE))
