@@ -79,12 +79,15 @@ async def handle_chat_member_update(update: Update, context: ContextTypes.DEFAUL
 
         try:
             warn = (
-                f"⚠️ {adder_mention}, external bots are not allowed here.\n"
-                f"@{bot_name} has been removed. 🦅"
+                f"<b>Action:</b> Bot removed\n"
+                f"<b>Added by:</b> <code>{adder_mention}</code>\n"
+                f"<b>Bot:</b> <code>@{bot_name}</code>\n\n"
+                f"External bots are not allowed in this group."
             )
             await context.bot.send_message(
                 chat_id=chat.id,
                 text=warn,
+                parse_mode="HTML",
                 message_thread_id=topic_id
             )
         except TelegramError as e:
