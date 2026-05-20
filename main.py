@@ -4,6 +4,7 @@ Main entry point.
 """
 
 import asyncio
+import os
 import logging
 from telegram.ext import (
     Application, CommandHandler, MessageHandler, InlineQueryHandler,
@@ -679,12 +680,28 @@ async def main():
                              "chosen_inline_result", "chat_member", "my_chat_member"]
         )
         logger.info("Dr. Crow is flying. 🦅")
+
+        # Start a tiny health server so Render/UptimeRobot can ping it
+        async def _health(request):
+            return web.Response(text="ok")
+
+        _health_app = web.Application()
+        _health_app.router.add_get("/", _health)
+        _health_app.router.add_get("/health", _health)
+        _runner = web.AppRunner(_health_app)
+        await _runner.setup()
+        _port = int(os.environ.get("PORT", 8080))
+        _site = web.TCPSite(_runner, "0.0.0.0", _port)
+        await _site.start()
+        logger.info(f"Health server on port {_port}")
+
         # Keep running until Ctrl+C
         try:
             await asyncio.Event().wait()
         except (KeyboardInterrupt, SystemExit):
             pass
         finally:
+            await _runner.cleanup()
             await app.updater.stop()
             await app.stop()
             await app.shutdown()
