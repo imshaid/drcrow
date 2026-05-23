@@ -792,7 +792,7 @@ def _make_utility_inline_result(u: dict) -> InlineQueryResultArticle:
         title=f"{emoji} {label}",
         description=subtitle,
         input_message_content=InputTextMessageContent(
-            message_text=f"{emoji} {label} — {uid}"
+            message_text=f"{emoji} {label}"
         )
     )
 
@@ -830,7 +830,7 @@ def _make_vidoc_inline_result(vidoc: dict, thumbnail_url: str = "") -> InlineQue
         title=f"🎬 {course_code or subject or uid}",
         description=subtitle,
         input_message_content=InputTextMessageContent(
-            message_text=f"🎬 Videos & Docs — {course_code or uid}"
+            message_text=f"🎬 Videos & Docs — {course_code or subject or 'Video'}"
         )
     )
     if thumbnail_url:
@@ -886,7 +886,7 @@ def _make_psq_inline_result(psq: dict, cover_url: str = "") -> InlineQueryResult
         title=f"📋 {title}",
         description=subtitle,
         input_message_content=InputTextMessageContent(
-            message_text=f"📋 {title} — {uid}"
+            message_text=f"📋 {title}"
         )
     )
     if cover_url:
@@ -937,7 +937,7 @@ def _make_no_result(query_text: str, cat_label: str = "") -> InlineQueryResultAr
         description=desc,
         input_message_content=InputTextMessageContent(
             message_text=(
-                f"No resource found for: {query_text}\n\n"
+                f"🦅 No resource found for: {query_text}\n\n"
                 f"Tips:\n"
                 f"• Try course code: CSE311 note\n"
                 f"• Try shorter keywords: dbms mid\n"
@@ -954,7 +954,7 @@ def _make_tip_result() -> InlineQueryResultArticle:
         description="Try: CSE311 note, dbms mid, algorithm book",
         input_message_content=InputTextMessageContent(
             message_text=(
-                "Dr. Crow Search Tips\n\n"
+                "🦅 Dr. Crow Search Tips\n\n"
                 "• CSE311 note → notes for that course\n"
                 "• dbms mid → DBMS midterm resources\n"
                 "• algorithm book → algorithm textbooks\n\n"
@@ -1180,7 +1180,7 @@ async def _report_get_reason(update, context):
         except Exception:
             pass
 
-    await update.message.reply_text("✅ Report submitted! Admins will review it.")
+    await update.message.reply_text("✅ Report submitted! Admins will review it. 🦅")
     context.user_data.clear()
     return ConversationHandler.END
 
