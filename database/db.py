@@ -15,11 +15,16 @@ _pool: asyncpg.Pool = None
 async def get_pool() -> asyncpg.Pool:
     global _pool
     if _pool is None:
+        # strip query params from URL — asyncpg doesn't understand them
+        import re as _re
+        dsn = _re.sub(r'\?.*$', '', settings.DATABASE_URL)
         _pool = await asyncpg.create_pool(
-            settings.DATABASE_URL,
+            dsn,
             min_size=2,
             max_size=10,
-            command_timeout=30
+            command_timeout=30,
+            ssl='require',               # Supabase enforces SSL
+            statement_cache_size=0,      # required for Supabase transaction pooler
         )
     return _pool
 
