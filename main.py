@@ -43,11 +43,12 @@ from handlers.utility import (
     _make_list_cmd, _make_list_page_callback,
     addsyllabus2_conversation, addoutline_conversation, addroutine_conversation,
     addcal2_conversation, addadvisor2_conversation, addregpay2_conversation,
-    addutil2_conversation,
+    addutil2_conversation, addslide2_conversation,
     _make_edit_extended_conversation,
     addsyllabus_conversation, editsyllabus_conversation,
     addutil_conversation, editutil_conversation,
-    deleteutil_conversation, listutils_cmd, listutils_page_callback
+    deleteutil_conversation, listutils_cmd, listutils_page_callback,
+    editslide_conversation, deleteslide_conversation, listslides_cmd, listslides_page_callback
 )
 from handlers.vidoc import (
     addvidoc2_conversation, addvidoc_conversation, editvidoc_conversation,
@@ -143,6 +144,9 @@ def build_app() -> Application:
     app.add_handler(addutil2_conversation())
     app.add_handler(editutil_conversation())
     app.add_handler(deleteutil_conversation())
+    app.add_handler(addslide2_conversation())
+    app.add_handler(editslide_conversation())
+    app.add_handler(deleteslide_conversation())
     app.add_handler(_make_edit_extended_conversation("outline",  "editoutline"))
     app.add_handler(_make_edit_extended_conversation("routine",  "editroutine"))
     app.add_handler(_make_delete_conversation("syllabus", "deletesyllabus"))
@@ -196,6 +200,7 @@ def build_app() -> Application:
     app.add_handler(CommandHandler("listroutines",   _make_list_cmd("routine"),  filters=filters.ChatType.PRIVATE))
     app.add_handler(CommandHandler("listwaivers",    listwaivers_cmd,            filters=filters.ChatType.PRIVATE))
     app.add_handler(CommandHandler("listutils",      listutils_cmd,              filters=filters.ChatType.PRIVATE))
+    app.add_handler(CommandHandler("listslides",     listslides_cmd,             filters=filters.ChatType.PRIVATE))
     app.add_handler(CommandHandler("listregpays",    listregpays_cmd,            filters=filters.ChatType.PRIVATE))
 
     # Inline search
@@ -268,6 +273,7 @@ _ADM_ADD_MAP = {
     "cal":      "addcal",
     "advisor":  "addadvisor",
     "fee":      "addfee",
+    "slide":    "addslide",
 }
 
 async def _adm_add_callback(update, context):
@@ -567,6 +573,8 @@ async def handle_callback(update, context):
         await _make_list_page_callback("outline")(update, context)
     elif data.startswith("lu_util_misc_page_") or data == "lu_util_misc_noop":
         await listutils_page_callback(update, context)
+    elif data.startswith("lu_slides_page_") or data == "lu_slides_noop":
+        await listslides_page_callback(update, context)
     elif data.startswith("lrp_page_") or data == "lrp_noop":
         await listregpays_page_callback(update, context)
     elif data.startswith("lw_page_") or data == "lw_noop":

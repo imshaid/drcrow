@@ -289,11 +289,14 @@ def resources_inline_kb() -> InlineKeyboardMarkup:
         ],
         [
             InlineKeyboardButton("Videos & Docs",  switch_inline_query_current_chat="video "),
-            InlineKeyboardButton("Utilities",      switch_inline_query_current_chat="utility "),
+            InlineKeyboardButton("Slides",         switch_inline_query_current_chat="slide "),
         ],
         [
             InlineKeyboardButton("Syllabuses",     switch_inline_query_current_chat="syllabus "),
             InlineKeyboardButton("Outlines",       switch_inline_query_current_chat="outline "),
+        ],
+        [
+            InlineKeyboardButton("Utilities",      switch_inline_query_current_chat="utility "),
         ],
         [
             InlineKeyboardButton("🔍 Search anything…", switch_inline_query_current_chat=""),
@@ -510,6 +513,7 @@ async def handle_reply_button(update: Update, context: ContextTypes.DEFAULT_TYPE
             [
                 InlineKeyboardButton("Routine",    callback_data="adm_add_routine"),
                 InlineKeyboardButton("Utility",    callback_data="adm_add_util"),
+                InlineKeyboardButton("Slides",     callback_data="adm_add_slide"),
                 InlineKeyboardButton("Waiver",     callback_data="adm_add_waiver"),
             ],
             [

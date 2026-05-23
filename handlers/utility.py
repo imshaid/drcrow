@@ -3384,3 +3384,123 @@ async def _util2_skip_desc(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode=HTML
     )
     return UTIL2_COVER
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SLIDES — Duplicate of util_misc with category="slides"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+async def addslide2_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data.clear()
+    context.user_data["_in_conversation"] = True
+    context.user_data["_uploader_id"]     = update.effective_user.id
+    context.user_data["util_cat"]         = "slides"
+    msg = update.effective_message
+    await msg.reply_text(
+        "<i>Add Slide — Step 1</i>\n\n"
+        "Send slide files (PDF, image, etc.) one by one.\n"
+        "Send /done when finished.",
+        parse_mode=HTML
+    )
+    return UTIL2_FILES
+
+
+async def addslide2_files(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_files(update, context)
+
+
+async def addslide2_files_done(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_files_done(update, context)
+
+
+async def _generate_slide_uid() -> str:
+    from database.db import get_pool as _get_pool
+    pool = await _get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch("SELECT uid FROM utilities WHERE category = $1", "slides")
+    import re as _re
+    max_n = 0
+    for row in rows:
+        m = _re.match(r"^sl(\d+)$", row["uid"])
+        if m:
+            max_n = max(max_n, int(m.group(1)))
+    return f"sl{max_n + 1:02d}"
+
+
+async def addslide2_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    # Reuse addutil2_info logic but set category to slides
+    return await addutil2_info(update, context)
+
+
+async def addslide2_desc(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_desc(update, context)
+
+
+async def _slide2_skip_desc(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["message_text"]     = None
+    context.user_data["message_entities"] = None
+    await update.message.reply_text(
+        "<i>Step 4</i>\n\nSend cover image, or <code>-</code> to skip.",
+        parse_mode=HTML
+    )
+    return UTIL2_COVER
+
+
+async def addslide2_cover(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_cover(update, context)
+
+
+async def addslide2_tags_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_tags_input(update, context)
+
+
+async def addslide2_tags(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["util_cat"] = "slides"
+    return await addutil2_tags(update, context)
+
+
+def addslide2_conversation() -> ConversationHandler:
+    return ConversationHandler(
+        entry_points=[
+            CommandHandler("addslide", addslide2_start),
+            CallbackQueryHandler(addslide2_start, pattern="^adm_add_slide$"),
+        ],
+        states={
+            UTIL2_FILES: [
+                CommandHandler("done", addslide2_files_done),
+                MessageHandler(filters.Document.ALL | filters.PHOTO, addslide2_files),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, addslide2_files),
+            ],
+            UTIL2_INFO:  [MessageHandler(filters.TEXT & ~filters.COMMAND, addslide2_info)],
+            UTIL2_DESC:  [
+                CommandHandler("done", _slide2_skip_desc),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, addslide2_desc),
+            ],
+            UTIL2_COVER: [
+                MessageHandler(filters.PHOTO | filters.Document.IMAGE, addslide2_cover),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, addslide2_cover),
+            ],
+            UTIL2_TAGS: [
+                CommandHandler("done", addslide2_tags),
+                MessageHandler(filters.TEXT & ~filters.COMMAND, addslide2_tags_input),
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", lambda u, c: (
+            u.message.reply_text("Cancelled.") or ConversationHandler.END
+        ))],
+        conversation_timeout=300,
+        per_message=False,
+        allow_reentry=True
+    )
+
+
+# Edit/delete/list slides reuse utility infrastructure
+editslide_conversation   = lambda: _make_edit_extended_conversation("slides", "editslide")
+deleteslide_conversation = lambda: _make_delete_conversation("slides", "deleteslide")
+listslides_cmd           = _make_list_cmd("slides")
+listslides_page_callback = _make_list_page_callback("slides")
