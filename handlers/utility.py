@@ -710,16 +710,40 @@ async def deliver_utility(chat_id: int, uid: str, bot):
         files_to_send.append((u["file_id"], u.get("file_type", "document")))
 
     if files_to_send:
-        for i, (fid, ftype) in enumerate(files_to_send):
-            caption_text = h(title) if (i == 0 and title) else None
-            parse_mode   = "HTML" if caption_text else None
-            # Attach URL button to first file directly
-            kb = keyboard if i == 0 else None
+        import asyncio as _aio
+        from telegram import InputMediaDocument, InputMediaPhoto
+
+        if len(files_to_send) == 1:
+            fid, ftype = files_to_send[0]
+            caption_text = h(title) if title else None
             await _send_utility_file(bot, chat_id, fid, ftype,
-                                     caption=caption_text, keyboard=kb, parse_mode=parse_mode)
-            if i < len(files_to_send) - 1:
-                import asyncio as _aio
-                await _aio.sleep(0.3)
+                                     caption=caption_text, keyboard=keyboard,
+                                     parse_mode="HTML" if caption_text else None)
+        else:
+            chunks = [files_to_send[i:i+10] for i in range(0, len(files_to_send), 10)]
+            first_chunk = True
+            for chunk in chunks:
+                media_group = []
+                for idx, (fid, ftype) in enumerate(chunk):
+                    caption_text = h(title) if (first_chunk and idx == 0 and title) else None
+                    if ftype == "photo":
+                        media_group.append(InputMediaPhoto(
+                            media=fid,
+                            caption=caption_text,
+                            parse_mode="HTML" if caption_text else None
+                        ))
+                    else:
+                        media_group.append(InputMediaDocument(
+                            media=fid,
+                            caption=caption_text,
+                            parse_mode="HTML" if caption_text else None
+                        ))
+                await bot.send_media_group(chat_id, media=media_group)
+                first_chunk = False
+                if chunk != chunks[-1]:
+                    await _aio.sleep(0.5)
+            if keyboard:
+                await bot.send_message(chat_id, "\U0001f517", reply_markup=keyboard)
     elif u.get("url"):
         cat   = u.get("category", "")
         emoji, label = CATEGORIES.get(cat, ("📄", "Info"))
