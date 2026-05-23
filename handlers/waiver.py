@@ -573,7 +573,7 @@ def deletewaiver_conversation() -> ConversationHandler:
         entry_points=[CommandHandler("deletewaiver", deletewaiver_start)],
         states={DW_CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, deletewaiver_confirm)]},
         fallbacks=[CommandHandler("cancel", lambda u, c: (
-            u.message.reply_text("Cancelled. 🦅") or ConversationHandler.END
+            u.message.reply_text("Cancelled.") or ConversationHandler.END
         ))],
         conversation_timeout=120, per_message=False
     )

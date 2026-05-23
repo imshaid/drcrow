@@ -649,7 +649,7 @@ async def deletenote_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def deletenote_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Deletion cancelled. Note is safe. 🦅")
+    await update.message.reply_text("Deletion cancelled. Note is safe.")
     context.user_data.clear()
     return ConversationHandler.END
 

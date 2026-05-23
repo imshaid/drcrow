@@ -531,7 +531,7 @@ async def deletepsq_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def deletepsq_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Deletion cancelled. 🦅")
+    await update.message.reply_text("Deletion cancelled.")
     context.user_data.clear()
     return ConversationHandler.END
 

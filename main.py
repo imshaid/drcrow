@@ -87,7 +87,7 @@ logger = logging.getLogger(__name__)
 
 
 async def health_check(request):
-    return web.Response(text="Dr. Crow is alive. 🦅")
+    return web.Response(text="Dr. Crow is alive.")
 
 
 def build_app() -> Application:
@@ -680,7 +680,7 @@ async def main():
             allowed_updates=["message", "callback_query", "inline_query",
                              "chosen_inline_result", "chat_member", "my_chat_member"]
         )
-        logger.info("Dr. Crow is flying. 🦅")
+        logger.info("Dr. Crow is flying.")
 
         # Start a tiny health server so Render/UptimeRobot can ping it
         async def _health(request):

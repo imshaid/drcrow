@@ -71,7 +71,7 @@ async def _weekly_digest(app: Application):
             res_text += f"• {r['title']} ({r['access_count']} downloads)\n"
 
         digest = (
-            f"🦅 *Weekly Digest — Twilight Crows*\n"
+            f"*Weekly Digest — Twilight Crows*\n"
             f"_{datetime.now().strftime('%B %d, %Y')}_\n\n"
             f"📊 *This Week:*\n"
             f"⬇️ Downloads: {stats['downloads']}\n"

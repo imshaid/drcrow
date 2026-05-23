@@ -574,7 +574,7 @@ def _make_delete_conversation(category: str, command: str) -> ConversationHandle
         entry_points=[CommandHandler(command, _make_delete_start(category, command))],
         states={DU_CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, _delete_confirm)]},
         fallbacks=[CommandHandler("cancel", lambda u, c: (
-            u.message.reply_text("Cancelled. 🦅") or ConversationHandler.END
+            u.message.reply_text("Cancelled.") or ConversationHandler.END
         ))],
         conversation_timeout=120, per_message=False
     )

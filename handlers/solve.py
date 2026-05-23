@@ -689,7 +689,7 @@ def deletesolve_conversation() -> ConversationHandler:
         entry_points=[CommandHandler("deletesolve", deletesolve_start)],
         states={DSV_CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, deletesolve_confirm)]},
         fallbacks=[CommandHandler("cancel", lambda u, c: (
-            u.message.reply_text("Cancelled. 🦅") or ConversationHandler.END
+            u.message.reply_text("Cancelled.") or ConversationHandler.END
         ))],
         conversation_timeout=120, per_message=False
     )
@@ -1127,7 +1127,7 @@ def deletecorrect_conversation() -> ConversationHandler:
         entry_points=[CommandHandler("deletecorrect", deletecorrect_start)],
         states={DC_CONFIRM: [MessageHandler(filters.TEXT & ~filters.COMMAND, deletecorrect_confirm)]},
         fallbacks=[CommandHandler("cancel", lambda u, c: (
-            u.message.reply_text("Cancelled. 🦅") or ConversationHandler.END
+            u.message.reply_text("Cancelled.") or ConversationHandler.END
         ))],
         conversation_timeout=120, per_message=False
     )

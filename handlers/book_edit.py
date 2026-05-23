@@ -475,7 +475,7 @@ async def deletebook_confirm(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 
 async def deletebook_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Deletion cancelled. Book is safe. 🦅")
+    await update.message.reply_text("Deletion cancelled. Book is safe.")
     context.user_data.clear()
     return ConversationHandler.END
 
@@ -569,7 +569,7 @@ async def deletesolution_confirm(update: Update, context: ContextTypes.DEFAULT_T
 
 
 async def deletesolution_cancel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Deletion cancelled. Solution manual is safe. 🦅")
+    await update.message.reply_text("Deletion cancelled. Solution manual is safe.")
     context.user_data.clear()
     return ConversationHandler.END
 

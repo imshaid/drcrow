@@ -80,7 +80,7 @@ class Settings:
         "Hey there! 👋\n\n"
         "Dr. Crow is a private academic companion, built exclusively for the "
         "*Twilight Crows* — a close-knit BSc CSE community.\n\n"
-        "This bot isn't open to the public. It's a signature of something special. 🦅\n\n"
+        "This bot isn't open to the public. It's a signature of something special.\n\n"
         "If you're a Twilight Crow, make sure you're a member of the group and try again."
     )
 

@@ -30,7 +30,7 @@ def admin_only(func):
 @admin_only
 async def cmd_admin(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        "🦅 *Dr. Crow — Admin Panel*\n\nWhat would you like to do?",
+        "*Dr. Crow — Admin Panel*\n\nWhat would you like to do?",
         parse_mode=ParseMode.MARKDOWN,
         reply_markup=_admin_main_keyboard()
     )
@@ -180,7 +180,7 @@ async def handle_admin_callback(update: Update, context: ContextTypes.DEFAULT_TY
 
     elif data == "admin_back":
         await query.edit_message_text(
-            "🦅 *Dr. Crow — Admin Panel*\n\nWhat would you like to do?",
+            "*Dr. Crow — Admin Panel*\n\nWhat would you like to do?",
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=_admin_main_keyboard()
         )
@@ -282,7 +282,7 @@ async def _reject_resource(update: Update, context: ContextTypes.DEFAULT_TYPE, p
         await context.bot.send_message(
             pending["submitted_by"],
             f"😔 Your resource *{pending['title']}* was not approved.\n"
-            f"Don't give up — keep contributing! 🦅",
+            f"Don't give up — keep contributing!",
             parse_mode=ParseMode.MARKDOWN
         )
     except Exception:

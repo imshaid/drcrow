@@ -53,7 +53,7 @@ async def _receive_question(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     await update.message.reply_text(
         "✅ Your question has been submitted anonymously!\n"
-        "Once answered by the admin, it will be published. 🦅",
+        "Once answered by the admin, it will be published.",
         parse_mode=ParseMode.MARKDOWN
     )
     return ConversationHandler.END

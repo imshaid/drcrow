@@ -111,7 +111,7 @@ async def handle_member_left(bot: Bot, user_id: int, username: str, full_name: s
             chat_id=user_id,
             text=(
                 f"Hey {full_name}! 👋\n\n"
-                f"Looks like you've left *Twilight Crows*. We'll miss you! 🦅\n\n"
+                f"Looks like you've left *Twilight Crows*. We'll miss you!\n\n"
                 f"You can still use Dr. Crow for the next *{grace_hours} hours*. "
                 f"After that, access will be restricted to active members only.\n\n"
                 f"Want to come back? Here's the group link:\n"

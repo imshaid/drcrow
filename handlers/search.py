@@ -937,7 +937,7 @@ def _make_no_result(query_text: str, cat_label: str = "") -> InlineQueryResultAr
         description=desc,
         input_message_content=InputTextMessageContent(
             message_text=(
-                f"🦅 No resource found for: {query_text}\n\n"
+                f"No resource found for: {query_text}\n\n"
                 f"Tips:\n"
                 f"• Try course code: CSE311 note\n"
                 f"• Try shorter keywords: dbms mid\n"
@@ -954,7 +954,7 @@ def _make_tip_result() -> InlineQueryResultArticle:
         description="Try: CSE311 note, dbms mid, algorithm book",
         input_message_content=InputTextMessageContent(
             message_text=(
-                "🦅 Dr. Crow Search Tips\n\n"
+                "Dr. Crow Search Tips\n\n"
                 "• CSE311 note → notes for that course\n"
                 "• dbms mid → DBMS midterm resources\n"
                 "• algorithm book → algorithm textbooks\n\n"
@@ -1180,7 +1180,7 @@ async def _report_get_reason(update, context):
         except Exception:
             pass
 
-    await update.message.reply_text("✅ Report submitted! Admins will review it. 🦅")
+    await update.message.reply_text("✅ Report submitted! Admins will review it.")
     context.user_data.clear()
     return ConversationHandler.END
 

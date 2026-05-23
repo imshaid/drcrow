@@ -40,7 +40,7 @@ async def handle_chat_member_update(update: Update, context: ContextTypes.DEFAUL
                     "Hey there! 👋\n\n"
                     "Dr. Crow is a private companion built exclusively for "
                     "*Twilight Crows* — a special BSc CSE community.\n\n"
-                    "I can't operate outside my flock. Goodbye! 🦅🖤"
+                    "I can't operate outside my flock. Goodbye!🖤"
                 ),
                 parse_mode=ParseMode.MARKDOWN
             )
@@ -195,7 +195,7 @@ async def check_message_spam(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 await context.bot.send_message(
                     chat_id=settings.GROUP_ID,
                     text=f"📁 Files should be shared via @{context.bot.username} → Upload Resource. "
-                         f"Keeping the group organized! 🦅",
+                         f"Keeping the group organized!",
                     message_thread_id=topic_id
                 )
             except TelegramError:
