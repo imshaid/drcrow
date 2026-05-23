@@ -162,7 +162,17 @@ async def _load_history(user_id: int) -> list:
         await _clear_history(user_id)
         return []
     try:
-        return json.loads(row["history"]) if isinstance(row["history"], str) else (row["history"] or [])
+        raw = row["history"]
+        # asyncpg may return jsonb as already-parsed Python object or as string
+        if isinstance(raw, str):
+            raw = json.loads(raw)
+        # If it's still a string after parse (double-encoded), parse again
+        if isinstance(raw, str):
+            raw = json.loads(raw)
+        if not isinstance(raw, list):
+            return []
+        # Filter out any non-dict items (corrupted entries)
+        return [m for m in raw if isinstance(m, dict) and "role" in m]
     except Exception:
         return []
 
@@ -170,12 +180,13 @@ async def _load_history(user_id: int) -> list:
 async def _save_history(user_id: int, history: list):
     pool = await get_pool()
     async with pool.acquire() as conn:
+        import json as _json
         await conn.execute("""
             INSERT INTO ai_chat_history (user_id, history, updated_at)
-            VALUES ($1, $2, NOW())
+            VALUES ($1, $2::jsonb, NOW())
             ON CONFLICT (user_id) DO UPDATE
-            SET history = $2, updated_at = NOW()
-        """, user_id, json.dumps(history))
+            SET history = $2::jsonb, updated_at = NOW()
+        """, user_id, _json.dumps(history))
 
 
 async def _clear_history(user_id: int):
