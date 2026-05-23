@@ -62,7 +62,7 @@ _RTYPE_LABEL = {
     "psq": "psq", "vidoc": "vidoc", "waiver": "waiver",
     "regpay": "regpay",
     "syllabus": "utility", "outline": "utility", "routine": "utility",
-    "util": "utility", "slide": "utility", "cal": "utility", "advisor": "utility",
+    "util": "utility", "slide": "slide", "cal": "utility", "advisor": "utility",
 }
 
 
@@ -431,7 +431,7 @@ async def inline_search(update, context):
         elif rtype == "waiver":
             thumb = r.get("thumbnail_url") or ""
             res = _make_waiver_inline_result(r, thumbnail_url=thumb)
-        elif rtype == "utility":
+        elif rtype in ("utility", "slide"):
             res = _make_utility_inline_result(r)
         elif rtype == "psq":
             cover_url = r.get("cover_url") or ""
@@ -446,7 +446,7 @@ async def inline_search(update, context):
     psq_count   = sum(1 for r in results_list if r.get("_type") == "psq")
     solve_count = sum(1 for r in results_list if r.get("_type") == "solve")
     vidoc_count = sum(1 for r in results_list if r.get("_type") == "vidoc")
-    util_count  = sum(1 for r in results_list if r.get("_type") == "utility")
+    util_count  = sum(1 for r in results_list if r.get("_type") in ("utility", "slide"))
     res_count  = len(results_list) - book_count - note_count - psq_count - solve_count - vidoc_count - util_count
 
     parts = []

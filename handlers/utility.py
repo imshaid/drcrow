@@ -3313,8 +3313,9 @@ async def addutil2_tags(update: Update, context: ContextTypes.DEFAULT_TYPE):
     courses = ud.get("_courses") or await _util_get_course_info(ud.get("course") or "")
     subject = courses[0]["name"] if courses else None
 
+    _save_cat = ud.get("util_cat", "util_misc")
     await insert_utility(
-        uid, "util_misc", tags, ud.get("_uploader_id", 0),
+        uid, _save_cat, tags, ud.get("_uploader_id", 0),
         title=ud.get("title"),
         subject=subject,
         course_code=ud.get("course"),
