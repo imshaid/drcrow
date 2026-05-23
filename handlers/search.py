@@ -35,7 +35,7 @@ REPORT_RESOURCE_ID, REPORT_REASON = range(2)
 
 CAT_LABELS = {
     "book": "Books", "note": "Notes", "question": "Past Questions",
-    "solution": "Solutions", "video": "Videos & Docs", "utility": "Utilities",
+    "solution": "Solutions", "video": "Videos & Docs", "utility": "Utilities", "slide": "Slides",
     "syllabus": "Syllabus", "outline": "Course Outlines",
     "routine": "Exam Routines", "calendar": "Academic Calendar",
     "advisor": "Advisor Info", "fee": "Fee Overview",
@@ -51,6 +51,7 @@ _UTILITY_CAT_MAP = {
     "outline":  "outline",
     "routine":  "routine",
     "util":     "util_misc",
+    "slide":    "slides",
     "cal":      "cal",
     "advisor":  "advisor",
 }
@@ -61,7 +62,7 @@ _RTYPE_LABEL = {
     "psq": "psq", "vidoc": "vidoc", "waiver": "waiver",
     "regpay": "regpay",
     "syllabus": "utility", "outline": "utility", "routine": "utility",
-    "util": "utility", "cal": "utility", "advisor": "utility",
+    "util": "utility", "slide": "utility", "cal": "utility", "advisor": "utility",
 }
 
 
@@ -776,6 +777,7 @@ def _make_utility_inline_result(u: dict) -> InlineQueryResultArticle:
         "outline":   ("📐", "Course Outline"),
         "routine":   ("🗓", "Exam Routine"),
         "util_misc": ("🔧", "Utility"),
+        "slides":    ("📑", "Slides"),
     }
     emoji, label = cats.get(cat, ("📄", "Info"))
 

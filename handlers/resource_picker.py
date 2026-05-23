@@ -159,6 +159,13 @@ FIELD_CFG = {
         "file":        ("📄", "File",        "file"),
         "cover":       ("🖼", "Cover",       "image"),
     },
+    "slide": {
+        "title":       ("📌", "Title",       "text"),
+        "course_code": ("📗", "Course Code", "course"),
+        "tags":        ("🏷", "Tags",        "tags"),
+        "file":        ("📄", "File",        "file"),
+        "cover":       ("🖼", "Cover",       "image"),
+    },
     "waiver": {
         "semester_name": ("🗓", "Semester",     "text"),
         "tuition_fee":   ("💰", "Tuition Fee",  "text"),
@@ -190,10 +197,10 @@ FIELD_CFG = {
 }
 
 # DB table for each type (utilities share one table)
-_UTILITY_TYPES = {"syllabus", "outline", "routine", "util", "cal", "advisor"}
+_UTILITY_TYPES = {"syllabus", "outline", "routine", "util", "slide", "cal", "advisor"}
 _UTILITY_CAT   = {
     "syllabus": "syllabus", "outline": "outline", "routine": "routine",
-    "util": "util_misc", "cal": "cal", "advisor": "advisor",
+    "util": "util_misc", "slide": "slides", "cal": "cal", "advisor": "advisor",
 }
 
 

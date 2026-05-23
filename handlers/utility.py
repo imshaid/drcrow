@@ -3205,7 +3205,11 @@ async def addutil2_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data.update(info)
 
     # Build auto tags
-    tags = {"utility"}
+    _ud_cat = context.user_data.get("util_cat", "util_misc")
+    _base_tag = "slides" if _ud_cat == "slides" else "utility"
+    tags = {_base_tag}
+    if _ud_cat == "slides":
+        tags.add("lectures")
     if info.get("course"):
         courses = await _util_get_course_info(info["course"])
         tags.add(info["course"].lower())

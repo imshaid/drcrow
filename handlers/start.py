@@ -261,6 +261,7 @@ def _edit_delete_type_keyboard(action: str) -> InlineKeyboardMarkup:
         ("Outline",  f"{prefix}outline "),
         ("Routine",  f"{prefix}routine "),
         ("Utility",  f"{prefix}util "),
+        ("Slide",    f"{prefix}slide "),
         ("Waiver",   f"{prefix}waiver "),
         ("RegPay",   f"{prefix}regpay "),
         ("Cal",      f"{prefix}cal "),
