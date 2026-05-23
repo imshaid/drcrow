@@ -941,6 +941,7 @@ async def ai_chat_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
     _img = image_data if 'image_data' in dir() and image_data else None
 
     # Static processing indicator — no repeated API calls
+    _t_start     = __import__('time').perf_counter()
     spinner_msg  = await msg.reply_text("Dr. Crow is thinking...")
     _typing_done = asyncio.Event()
 
@@ -972,6 +973,7 @@ async def ai_chat_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
             pass
 
     context.user_data["ai_model_idx"] = model_idx
+    _t_elapsed = round(__import__('time').perf_counter() - _t_start, 1)
 
     # ── Step 5: Replace spinner with formatted response ──────────────────────
     html_text = _md_to_html(response)
@@ -1019,7 +1021,16 @@ async def ai_chat_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     logger.error("Chunk send failed: %s", e2)
 
     # ── Step 6: Save history + cache ─────────────────────────────────────────
-    history.append({"role": "assistant", "content": response})
+    _model_name = GEMINI_MODELS[model_idx] if model_idx < len(GEMINI_MODELS) else "unknown"
+    history.append({
+        "role": "assistant",
+        "content": response,
+        "meta": {
+            "model":   _model_name,
+            "elapsed": str(_t_elapsed),
+            "sentAt":  __import__('datetime').datetime.now(__import__('datetime').timezone.utc).isoformat(),
+        }
+    })
     history = history[-20:]
     context.user_data["ai_history"] = history
     await _save_history(user.id, history)
