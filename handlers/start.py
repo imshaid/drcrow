@@ -295,6 +295,9 @@ def resources_inline_kb() -> InlineKeyboardMarkup:
             InlineKeyboardButton("Syllabuses",     switch_inline_query_current_chat="syllabus "),
             InlineKeyboardButton("Outlines",       switch_inline_query_current_chat="outline "),
         ],
+        [
+            InlineKeyboardButton("🔍 Search anything…", switch_inline_query_current_chat=""),
+        ],
     ])
 
 
