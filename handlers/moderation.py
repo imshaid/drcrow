@@ -31,7 +31,8 @@ async def handle_chat_member_update(update: Update, context: ContextTypes.DEFAUL
     old_member = result.old_chat_member
 
     # ── BOT ADDED TO FOREIGN CHAT ─────────────────────────────────────────────
-    if update.my_chat_member and not settings.is_allowed_chat(chat.id):
+    # Skip private chats — my_chat_member fires when user blocks/unblocks the bot
+    if update.my_chat_member and not settings.is_allowed_chat(chat.id) and chat.type != "private":
         logger.info(f"Bot added to foreign chat {chat.id} ({chat.title}). Leaving.")
         try:
             await context.bot.send_message(
@@ -40,7 +41,7 @@ async def handle_chat_member_update(update: Update, context: ContextTypes.DEFAUL
                     "Hey there! 👋\n\n"
                     "Dr. Crow is a private companion built exclusively for "
                     "*Twilight Crows* — a special BSc CSE community.\n\n"
-                    "I can't operate outside my flock. Goodbye!🖤"
+                    "I can't operate outside my flock. Goodbye!"
                 ),
                 parse_mode=ParseMode.MARKDOWN
             )
@@ -194,8 +195,7 @@ async def check_message_spam(update: Update, context: ContextTypes.DEFAULT_TYPE)
                 await msg.delete()
                 await context.bot.send_message(
                     chat_id=settings.GROUP_ID,
-                    text=f"📁 Files should be shared via @{context.bot.username} → Upload Resource. "
-                         f"Keeping the group organized!",
+                    text=f"Files should be shared via @{context.bot.username} → Upload Resource.",
                     message_thread_id=topic_id
                 )
             except TelegramError:
@@ -255,7 +255,7 @@ async def _permanent_remove(context, chat_id: int, user_id: int, reason: str):
     try:
         await context.bot.send_message(
             user_id,
-            f"😔 You have been permanently removed from *Twilight Crows*.\n"
+            f"You have been permanently removed from *Twilight Crows*.\n"
             f"Reason: {reason}\n\n"
             f"If you believe this is an error, contact the group admin.",
             parse_mode=ParseMode.MARKDOWN
