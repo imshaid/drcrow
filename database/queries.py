@@ -227,6 +227,11 @@ async def insert_resource(
             RETURNING id
         """, title, file_id, file_type, course_code, category,
             json.dumps(tags), semester_id, uploaded_by, approved_by)
+        if uploaded_by:
+            await conn.execute(
+                "UPDATE users SET upload_count = upload_count + 1 WHERE user_id = $1",
+                uploaded_by
+            )
         return resource_id
 
 

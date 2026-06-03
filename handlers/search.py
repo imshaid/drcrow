@@ -160,10 +160,36 @@ async def _deliver_resource_by_uid(bot, user_id: int, uid: str) -> bool:
         ("regpay",   _get_regpay_for_delivery),
     ]
 
+    # cat mapping: rtype -> miniapp deliverKey (for analytics)
+    RTYPE_TO_CAT = {
+        "note": "notes", "book": "books", "solve": "solves",
+        "psq": "psqs", "vidoc": "vidocs", "utility": "utilities",
+        "waiver": "waivers", "regpay": "regpay", "slide": "slides",
+    }
     for rtype, finder in finders:
         try:
             result = await finder(bot, user_id, uid)
             if result:
+                import json as _json
+                from database.db import get_pool as _get_pool
+                # For utility types, detect actual category from DB
+                cat = RTYPE_TO_CAT.get(rtype, rtype)
+                if rtype == "utility":
+                    try:
+                        from database.utility_queries import get_utility
+                        _rec = await get_utility(uid)
+                        if _rec:
+                            _db_cat = _rec.get("category", "util_misc")
+                            cat = {"util_misc": "utilities", "slides": "slides"}.get(_db_cat, _db_cat)
+                    except Exception:
+                        pass
+                await queries.increment_download(user_id)
+                _pool = await _get_pool()
+                async with _pool.acquire() as _conn:
+                    await _conn.execute(
+                        "INSERT INTO analytics (event_type, user_id, meta) VALUES ($1, $2, $3::jsonb)",
+                        'download', user_id, _json.dumps({"cat": cat, "uid": uid})
+                    )
                 return True
         except Exception as e:
             logger.debug(f"_deliver_resource_by_uid: {rtype} lookup failed: {e}")
