@@ -54,48 +54,7 @@ async def _daily_exam_alert(app: Application):
 
 
 async def _weekly_digest(app: Application):
-    """Sunday digest — top resources, leaderboard, weekly stats."""
-    try:
-        stats = await queries.get_weekly_stats()
-        leaderboard = await queries.get_leaderboard(5)
-        top_resources = await queries.get_top_resources_this_week(5)
-
-        lb_text = ""
-        for i, u in enumerate(leaderboard, 1):
-            name = u["full_name"] or u["username"] or "Unknown"
-            stars = u["stars"] or 0.0
-            lb_text += f"{i}. {name} — {stars:.1f} ⭐\n"
-
-        res_text = ""
-        for r in top_resources:
-            res_text += f"• {r['title']} ({r['access_count']} downloads)\n"
-
-        digest = (
-            f"*Weekly Digest — Twilight Crows*\n"
-            f"_{datetime.now().strftime('%B %d, %Y')}_\n\n"
-            f"📊 *This Week:*\n"
-            f"⬇️ Downloads: {stats['downloads']}\n"
-            f"⬆️ Uploads: {stats['uploads']}\n"
-            f"👥 Active members: {stats['active_users']}\n\n"
-            f"🔥 *Top Resources:*\n{res_text or 'No data yet'}\n"
-            f"🏆 *Leaderboard:*\n{lb_text or 'No data yet'}\n\n"
-            f"Keep contributing! 🖤"
-        )
-
-        # Post to group
-        try:
-            await app.bot.send_message(
-                chat_id=settings.GROUP_ID,
-                text=digest,
-                parse_mode=ParseMode.MARKDOWN,
-                message_thread_id=settings.ALLOWED_TOPIC_IDS[0] if settings.ALLOWED_TOPIC_IDS else None
-            )
-        except Exception as e:
-            logger.warning(f"Could not post digest to group: {e}")
-
-        logger.info("Weekly digest posted.")
-    except Exception as e:
-        logger.error(f"Weekly digest failed: {e}")
+    """Disabled — weekly digest removed."""    pass
 
 
 async def _midnight_streak_reset(app: Application):
