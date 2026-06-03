@@ -455,24 +455,25 @@ async def handle_member_section_input(update: Update, context: ContextTypes.DEFA
         await update.message.reply_text("Send a single letter like A, B, or C.")
         return True
 
+    # Always save section regardless of exam schedule
+    await queries.set_user_section(update.effective_user.id, text)
+    context.user_data.pop("exam_waiting_section", None)
+
     exists = await queries.section_has_active_exam(text)
     if not exists:
         active = await queries.get_active_schedules()
         if not active:
             await update.message.reply_text(
-                "No upcoming exam schedule found for the current semester."
+                f"Section *{text}* saved.\n\nNo upcoming exam schedule found for the current semester.",
+                parse_mode=ParseMode.MARKDOWN,
             )
         else:
             await update.message.reply_text(
-                f"Section *{text}* has no exam data in the current schedule.\n"
-                "Please check your section letter or contact your CR.",
+                f"Section *{text}* saved.\n\nNo exam data found for this section yet.",
                 parse_mode=ParseMode.MARKDOWN,
             )
-        context.user_data.pop("exam_waiting_section", None)
         return True
 
-    await queries.set_user_section(update.effective_user.id, text)
-    context.user_data.pop("exam_waiting_section", None)
     await update.message.reply_text(f"Section *{text}* saved.", parse_mode=ParseMode.MARKDOWN)
     await _send_exam_info(update.message, context, text)
     return True
