@@ -634,30 +634,62 @@ async def chosen_inline_result_handler(update, context):
             pass
         return
 
+    # ── Delivery with analytics tracking ────────────────────────────────────
+    import json as _json
+    from database.db import get_pool as _get_pool
+
+    async def _log_download(cat: str, uid: str):
+        try:
+            await queries.increment_download(user.id)
+            _pool = await _get_pool()
+            async with _pool.acquire() as _conn:
+                await _conn.execute(
+                    "INSERT INTO analytics (event_type, user_id, meta) VALUES ($1, $2, $3::jsonb)",
+                    'download', user.id, _json.dumps({"cat": cat, "uid": uid})
+                )
+        except Exception as _e:
+            logger.debug(f"analytics log failed: {_e}")
+
     if result_id.startswith("book_"):
         book_uid = result_id[len("book_"):]
         await deliver_book(user.id, book_uid, context.bot)
+        await _log_download("books", book_uid)
     elif result_id.startswith("note_"):
         note_uid = result_id[len("note_"):]
         await deliver_note(user.id, note_uid, context.bot)
+        await _log_download("notes", note_uid)
     elif result_id.startswith("solve_"):
         solve_uid = result_id[len("solve_"):]
         await deliver_solve(user.id, solve_uid, context.bot)
+        await _log_download("solves", solve_uid)
     elif result_id.startswith("regpay_"):
         regpay_uid = result_id[len("regpay_"):]
         await deliver_regpay(user.id, regpay_uid, context.bot)
+        await _log_download("regpay", regpay_uid)
     elif result_id.startswith("waiver_"):
         waiver_uid = result_id[len("waiver_"):]
         await deliver_waiver(user.id, waiver_uid, context.bot)
+        await _log_download("waivers", waiver_uid)
     elif result_id.startswith("util_"):
         util_uid = result_id[len("util_"):]
         await deliver_utility(user.id, util_uid, context.bot)
+        # detect actual category (slides vs util_misc)
+        try:
+            from database.utility_queries import get_utility
+            _rec = await get_utility(util_uid)
+            _db_cat = (_rec or {}).get("category", "util_misc")
+            _cat = {"util_misc": "utilities", "slides": "slides"}.get(_db_cat, _db_cat)
+        except Exception:
+            _cat = "utilities"
+        await _log_download(_cat, util_uid)
     elif result_id.startswith("vidoc_"):
         vidoc_uid = result_id[len("vidoc_"):]
         await deliver_vidoc(user.id, vidoc_uid, context.bot)
+        await _log_download("vidocs", vidoc_uid)
     elif result_id.startswith("psq_"):
         psq_uid = result_id[len("psq_"):]
         await deliver_psq(user.id, psq_uid, context.bot)
+        await _log_download("psqs", psq_uid)
     elif result_id.isdigit():
         await _send_resource_to_dm(context.bot, user.id, int(result_id))
 
