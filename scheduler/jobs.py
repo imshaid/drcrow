@@ -54,7 +54,8 @@ async def _daily_exam_alert(app: Application):
 
 
 async def _weekly_digest(app: Application):
-    """Disabled — weekly digest removed."""    pass
+    """Disabled — weekly digest removed."""
+    pass
 
 
 async def _midnight_streak_reset(app: Application):
