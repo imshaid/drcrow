@@ -101,7 +101,28 @@ async def bc_collect_file(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await msg.reply_text("Send a file or - to skip files.")
         return BC_FILES
 
-    context.user_data["bc_files"].append((msg.chat_id, msg.message_id))
+    # Extract file_id and file_type for mini app delivery
+    if msg.document:
+        fid, ftype = msg.document.file_id, "document"
+    elif msg.photo:
+        fid, ftype = msg.photo[-1].file_id, "photo"
+    elif msg.video:
+        fid, ftype = msg.video.file_id, "video"
+    elif msg.audio:
+        fid, ftype = msg.audio.file_id, "audio"
+    elif msg.voice:
+        fid, ftype = msg.voice.file_id, "voice"
+    elif msg.sticker:
+        fid, ftype = msg.sticker.file_id, "sticker"
+    else:
+        fid, ftype = None, "document"
+
+    context.user_data["bc_files"].append({
+        "from_chat":  msg.chat_id,
+        "message_id": msg.message_id,
+        "file_id":    fid,
+        "file_type":  ftype,
+    })
     count = len(context.user_data["bc_files"])
     await msg.reply_text(f"File {count} saved. Send more or - when done.")
     return BC_FILES
@@ -133,11 +154,13 @@ async def bc_collect_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         topic_id = settings.ALLOWED_TOPIC_IDS[0] if settings.ALLOWED_TOPIC_IDS else None
         status = await msg.reply_text(f"Sending to group topic...")
         try:
-            for from_chat, msg_id in files:
+            for f in files:
+                fc  = f["from_chat"]  if isinstance(f, dict) else f[0]
+                mid = f["message_id"] if isinstance(f, dict) else f[1]
                 await context.bot.copy_message(
                     chat_id=settings.GROUP_ID,
-                    from_chat_id=from_chat,
-                    message_id=msg_id,
+                    from_chat_id=fc,
+                    message_id=mid,
                     message_thread_id=topic_id,
                 )
                 await asyncio.sleep(_FLOOD_DELAY)
@@ -170,7 +193,7 @@ async def bc_collect_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Log to broadcasts table (DM only)
         import json as _json
-        _media_log    = [{"from_chat": fc, "message_id": mid} for fc, mid in files]
+        _media_log    = [f if isinstance(f, dict) else {"from_chat": f[0], "message_id": f[1]} for f in files]
         _entities_log = []
         if has_text and msg.entities:
             _entities_log = [e.to_dict() for e in msg.entities]
@@ -200,9 +223,11 @@ async def _deliver(bot, user_ids, file_msgs, text_msg):
     sent = failed = 0
     for uid in user_ids:
         try:
-            for from_chat, msg_id in file_msgs:
+            for f in file_msgs:
+                fc   = f["from_chat"]  if isinstance(f, dict) else f[0]
+                mid  = f["message_id"] if isinstance(f, dict) else f[1]
                 await bot.copy_message(
-                    chat_id=uid, from_chat_id=from_chat, message_id=msg_id
+                    chat_id=uid, from_chat_id=fc, message_id=mid
                 )
                 await asyncio.sleep(_FLOOD_DELAY)
             if text_msg:
