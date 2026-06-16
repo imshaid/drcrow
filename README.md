@@ -23,4 +23,8 @@ middleware, scheduler, and database layers.
 Built for and maintained by the Twilight Crows community 
 (~400 members, DIU Batch 66).
 
+## Related
+- [Dr. Crow Mini App](https://github.com/imshaid/drcrow-miniapp) — Next.js web interface
+- Live: [drcrow.vercel.app](https://drcrow.vercel.app)
+
 > Active development. Solo maintained.
